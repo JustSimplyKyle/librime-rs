@@ -1,8 +1,10 @@
 use std::env;
 use std::path::PathBuf;
 
-const DEFAULT_INCLUDE_DIR: &str = "/usr/include";
-const DEFAULT_LIB_DIR: &str = "/usr/lib";
+const DEFAULT_INCLUDE_DIR: &str =
+    "/opt/codex/ferrari/4.0.813/sysroots/cortexa53-crypto-remarkable-linux/usr/include";
+const DEFAULT_LIB_DIR: &str =
+    "/opt/codex/ferrari/4.0.813/sysroots/cortexa53-crypto-remarkable-linux/usr/lib";
 
 fn main() {
     let mut include_dir = DEFAULT_INCLUDE_DIR.to_owned();

@@ -7,8 +7,8 @@ use std::ptr::null_mut;
 use std::sync::Mutex;
 
 use librime_sys::{
-    rime_get_api, rime_struct, RimeApi, RimeCommit, RimeContext, RimeKeyCode, RimeModifier,
-    RimeSessionId, RimeStatus,
+    rime_get_api, rime_struct, RimeApi, RimeCommit, RimeContext, RimeKeyCode,
+    RimeKeyCode_XK_BackSpace, RimeModifier, RimeModifier_kShiftMask, RimeSessionId, RimeStatus,
 };
 use once_cell::sync::Lazy;
 #[cfg(feature = "serde")]
@@ -223,6 +223,34 @@ impl Session {
             KeyStatus::Pass
         }
     }
+    pub fn select_candidate(&self, index: usize) -> Option<()> {
+        unsafe {
+            if rime_api_call!(select_candidate_on_current_page, self.session_id, index) == 0 {
+                None
+            } else {
+                Some(())
+            }
+        }
+    }
+    pub fn next_page(&self) -> Option<()> {
+        unsafe {
+            if rime_api_call!(change_page, self.session_id, 0) == 0 {
+                None
+            } else {
+                Some(())
+            }
+        }
+    }
+
+    pub fn prev_page(&self) -> Option<()> {
+        unsafe {
+            if rime_api_call!(change_page, self.session_id, 1) == 0 {
+                None
+            } else {
+                Some(())
+            }
+        }
+    }
 
     pub fn context(&self) -> Option<Context> {
         unsafe {
@@ -242,6 +270,10 @@ impl Session {
             }
         }
         Some(Commit { inner: commit })
+    }
+    pub fn backspace(&self) -> KeyStatus {
+        let key = KeyEvent::new(RimeKeyCode_XK_BackSpace, RimeModifier_kShiftMask);
+        self.process_key(key)
     }
 
     pub fn close(&mut self) -> Result<()> {
